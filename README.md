@@ -1,5 +1,5 @@
 
-# This component is deprecated. We keep the code base around as an example Java / Spring Boot App
+# This code base around as an example Java / Spring Boot App
 
 # Automation API Server
 
