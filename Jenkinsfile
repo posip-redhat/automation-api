@@ -48,7 +48,7 @@ node('jenkins-slave-mvn') {
 
   stage('SCM Checkout') {
     checkout scm
-    slackSend color: 'good', message: 'Message from Jenkins Pipeline'
+    slackSend color: 'good', message: 'Grabbing Code from GitHub for OpenShift Jenkins Pipeline'
   }
 
   dir ("${env.SOURCE_CONTEXT_DIR}") {
@@ -89,6 +89,9 @@ node('jenkins-slave-mvn') {
     openshiftTag (apiURL: "${env.OCP_API_SERVER}", authToken: "${env.OCP_TOKEN}", destStream: "${env.APP_NAME}", destTag: 'latest', destinationAuthToken: "${env.OCP_TOKEN}", destinationNamespace: "${env.DEMO_PROJECT}", namespace: "${env.DEV_PROJECT}", srcStream: "${env.APP_NAME}", srcTag: 'latest')
 
     openshiftVerifyDeployment (apiURL: "${env.OCP_API_SERVER}", authToken: "${env.OCP_TOKEN}", depCfg: "${env.APP_NAME}", namespace: "${env.DEMO_PROJECT}", verifyReplicaCount: true)
+    
+    slackSend color: 'good', message: 'Deployment succeeded for OpenShift Jenkins Pipeline'
+
   }
 
 }
