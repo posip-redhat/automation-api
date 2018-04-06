@@ -41,7 +41,6 @@ node (''){
 
 
 /**
-    slackSend color: 'good', message: 'Grabbing Code from GitHub for OpenShift Jenkins Pipeline'
     this section of the pipeline executes on a custom mvn build slave.
     you should not need to change anything below unless you need new stages or new integrations (e.g. Cucumber Reports or Sonar)
 **/
@@ -85,6 +84,7 @@ node('jenkins-slave-mvn') {
   }
 
   stage ('Deploy to Demo') {
+    slackSend color: 'good', message: 'OpenShift Jenkins Pipeline needs you to approve promotion of build'
     input "Promote Application to Demo?"
 
     openshiftTag (apiURL: "${env.OCP_API_SERVER}", authToken: "${env.OCP_TOKEN}", destStream: "${env.APP_NAME}", destTag: 'latest', destinationAuthToken: "${env.OCP_TOKEN}", destinationNamespace: "${env.DEMO_PROJECT}", namespace: "${env.DEV_PROJECT}", srcStream: "${env.APP_NAME}", srcTag: 'latest')
