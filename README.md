@@ -1,5 +1,5 @@
 
-# This code base around as an example Java / Spring Boot App
+# This code base is an example Java / Spring Boot App
 
 # Automation API Server
 
