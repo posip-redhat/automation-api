@@ -48,6 +48,7 @@ node('jenkins-slave-mvn') {
 
   stage('SCM Checkout') {
     checkout scm
+    slackSend color: 'good', message: 'Message from Jenkins Pipeline'
   }
 
   dir ("${env.SOURCE_CONTEXT_DIR}") {
