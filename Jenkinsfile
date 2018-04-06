@@ -81,10 +81,11 @@ node('jenkins-slave-mvn') {
     openshiftTag (apiURL: "${env.OCP_API_SERVER}", authToken: "${env.OCP_TOKEN}", destStream: "${env.APP_NAME}", destTag: 'latest', destinationAuthToken: "${env.OCP_TOKEN}", destinationNamespace: "${env.DEV_PROJECT}", namespace: "${env.CI_CD_PROJECT}", srcStream: "${env.APP_NAME}", srcTag: 'latest')
 
     openshiftVerifyDeployment (apiURL: "${env.OCP_API_SERVER}", authToken: "${env.OCP_TOKEN}", depCfg: "${env.APP_NAME}", namespace: "${env.DEV_PROJECT}", verifyReplicaCount: true)
+      
+    slackSend color: 'good', message: 'OpenShift Jenkins Pipeline needs you to approve promotion of build'
   }
 
   stage ('Deploy to Demo') {
-    slackSend color: 'good', message: 'OpenShift Jenkins Pipeline needs you to approve promotion of build'
     input "Promote Application to Demo?"
 
     openshiftTag (apiURL: "${env.OCP_API_SERVER}", authToken: "${env.OCP_TOKEN}", destStream: "${env.APP_NAME}", destTag: 'latest', destinationAuthToken: "${env.OCP_TOKEN}", destinationNamespace: "${env.DEMO_PROJECT}", namespace: "${env.DEV_PROJECT}", srcStream: "${env.APP_NAME}", srcTag: 'latest')
