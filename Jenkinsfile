@@ -46,13 +46,13 @@ node (''){
 **/
 node('jenkins-slave-mvn') {
 
-  stage('SCM Checkout') {
+  stage('Acquire Code from GitHub') {
     checkout scm
       
   }
 
   dir ("${env.SOURCE_CONTEXT_DIR}") {
-    stage('Wait for Nexus'){
+    stage('Connect to Local Nexus Secure Binary Repository '){
       // verify nexus is up or the build will fail with a strange error
       openshiftVerifyDeployment ( 
         apiURL: "${env.OCP_API_SERVER}", 
@@ -87,19 +87,24 @@ node('jenkins-slave-mvn') {
     } 
     **/
       
-    stage('Build App') {        
+    stage('Compile and Deploy Artifacts to Nexus') {        
       // TODO - introduce a variable here
       sh "mvn ${env.MVN_COMMAND} -D hsql -DaltDeploymentRepository=${MVN_SNAPSHOT_DEPLOYMENT_REPOSITORY}"
     }
 
     // assumes uber jar is created
-    stage('Build Image') {
+    stage('Build Container Image') {
       sh "oc start-build ${env.APP_NAME} --from-dir=${env.UBER_JAR_CONTEXT_DIR} --follow"
     }
   }
-
+    
+  stage('Scan Image') {
+    slackSend color: 'warning', message: 'OpenShift Jenkins Pipeline needs you to approve SCAN results from NEED_LINK_INCLUDED'
+    input "Promote Image for Deployment to Dev?"
+  }
+    
   // no user changes should be needed below this point
-  stage ('Deploy to Dev') {
+  stage ('Deploy Container to Dev') {
 
     openshiftTag (apiURL: "${env.OCP_API_SERVER}", authToken: "${env.OCP_TOKEN}", destStream: "${env.APP_NAME}", destTag: 'latest', destinationAuthToken: "${env.OCP_TOKEN}", destinationNamespace: "${env.DEV_PROJECT}", namespace: "${env.CI_CD_PROJECT}", srcStream: "${env.APP_NAME}", srcTag: 'latest')
 
@@ -108,8 +113,12 @@ node('jenkins-slave-mvn') {
     slackSend color: 'good', message: 'OpenShift Jenkins Pipeline needs you to approve promotion of build at https://ec2-34-217-23-58.us-west-2.compute.amazonaws.com:8443/console/project/labs-ci-cd/browse/pipelines/java-app-pipeline?tab=history'
   }
 
-  stage ('Deploy to Demo') {
-    input "Promote Application to Demo?"
+  stage('Conduct Vulnerability Assessment of Application') {
+    slackSend color: 'warning', message: 'OpenShift Jenkins Pipeline needs you to approve VA results from NEED_LINK_INCLUDED'
+  }    
+    
+  stage ('Deploy Container to Demo') {
+
 
     openshiftTag (apiURL: "${env.OCP_API_SERVER}", authToken: "${env.OCP_TOKEN}", destStream: "${env.APP_NAME}", destTag: 'latest', destinationAuthToken: "${env.OCP_TOKEN}", destinationNamespace: "${env.DEMO_PROJECT}", namespace: "${env.DEV_PROJECT}", srcStream: "${env.APP_NAME}", srcTag: 'latest')
 
