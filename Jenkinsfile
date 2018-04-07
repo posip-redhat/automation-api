@@ -67,9 +67,24 @@ node('jenkins-slave-mvn') {
       
     stage('Static Analysis Security Test App') {        
       // Try to mod for variable substitution
-      sh "mvn clean compile -DskipTests sonar:sonar -Dsonar.host.url=http://sonarqube-labs-ci-cd.34.217.23.58.nip.io -Dsonar.login=a2d3ba57906c3fbcf062126b8f7806357fd6b7a3"
+      //sh "mvn clean compile -DskipTests sonar:sonar -Dsonar.host.url=http://sonarqube-labs-ci-cd.34.217.23.58.nip.io -Dsonar.login=a2d3ba57906c3fbcf062126b8f7806357fd6b7a3"
     }
-            
+      
+    stage('SonarQube analysis') {
+        withSonarQubeEnv('SAST') {
+            sh 'mvn clean compile -DskipTests sonar:sonar'
+        } // SonarQube taskId is automatically attached to the pipeline context
+    }   
+      
+    stage("Promotion Gate"){
+        timeout(time: 5, unit: 'MINUTES') { // Just in case something goes wrong, pipeline will be killed after a timeout
+            def qg = waitForQualityGate() // Reuse taskId previously collected by withSonarQubeEnv
+            if (qg.status != 'OK') {
+                error "Pipeline aborted due to quality gate failure: ${qg.status}"
+            }
+        }
+    }   
+      
     stage('Build App') {        
       // TODO - introduce a variable here
       sh "mvn ${env.MVN_COMMAND} -D hsql -DaltDeploymentRepository=${MVN_SNAPSHOT_DEPLOYMENT_REPOSITORY}"
