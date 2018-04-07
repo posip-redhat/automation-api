@@ -85,7 +85,7 @@ node('jenkins-slave-mvn') {
             }
         }
     } 
-    *//
+    **/
       
     stage('Build App') {        
       // TODO - introduce a variable here
