@@ -64,16 +64,17 @@ node('jenkins-slave-mvn') {
         waitUnit: 'min'
       ) 
     }
+      
+    stage('Static Analysis Security Test App') {        
+      // Try to mod for variable substitution
+      sh "mvn sonar:sonar -Dsonar.host.url=http://sonarqube-labs-ci-cd.34.217.23.58.nip.io -Dsonar.login=a2d3ba57906c3fbcf062126b8f7806357fd6b7a3"
+    }
+            
     stage('Build App') {        
       // TODO - introduce a variable here
       sh "mvn ${env.MVN_COMMAND} -D hsql -DaltDeploymentRepository=${MVN_SNAPSHOT_DEPLOYMENT_REPOSITORY}"
     }
 
-    stage('Static Analysis Security Test App') {        
-      // Try to mod for variable substitution
-      sh "mvn ${env.MVN_COMMAND} sonar:sonar -Dsonar.host.url=http://sonarqube-labs-ci-cd.34.217.23.58.nip.io -Dsonar.login=a2d3ba57906c3fbcf062126b8f7806357fd6b7a3"
-    }
-      
     // assumes uber jar is created
     stage('Build Image') {
       sh "oc start-build ${env.APP_NAME} --from-dir=${env.UBER_JAR_CONTEXT_DIR} --follow"
