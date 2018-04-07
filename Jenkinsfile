@@ -67,7 +67,7 @@ node('jenkins-slave-mvn') {
       
     stage('Static Analysis Security Test App') {        
       // Try to mod for variable substitution
-      sh "mvn sonar:sonar -Dsonar.host.url=http://sonarqube-labs-ci-cd.34.217.23.58.nip.io -Dsonar.login=a2d3ba57906c3fbcf062126b8f7806357fd6b7a3"
+      sh "mvn clean compile -DskipTests sonar:sonar -Dsonar.host.url=http://sonarqube-labs-ci-cd.34.217.23.58.nip.io -Dsonar.login=a2d3ba57906c3fbcf062126b8f7806357fd6b7a3"
     }
             
     stage('Build App') {        
