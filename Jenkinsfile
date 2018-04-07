@@ -127,8 +127,8 @@ node('jenkins-slave-mvn') {
   }
  
   stage('Manual Promotion Stage') {
-      slackSend color: 'warning', message: 'OpenShift Jenkins Pipeline needs you to approve VA results from https://jenkins-labs-ci-cd.34.217.23.58.nip.io/blue/organizations/jenkins/labs-ci-cd%2Flabs-ci-cd-sample-pipeline/activity'
-      input "Promote Image for Dev to Demo? \n See: https://jenkins-labs-ci-cd.34.217.23.58.nip.io/blue/organizations/jenkins/labs-ci-cd%2Flabs-ci-cd-sample-pipeline/activity"
+      slackSend color: 'warning', message: 'OpenShift Jenkins Pipeline needs you to approve VA results from https://jenkins-labs-ci-cd.34.217.23.58.nip.io/blue/organizations/jenkins/labs-ci-cd%2Flabs-ci-cd-java-app-pipeline/activity'
+      input "Promote Image for Dev to Demo?"
   }    
     
   stage ('Deploy to Demo') {
