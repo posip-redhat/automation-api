@@ -112,10 +112,19 @@ node('jenkins-slave-mvn') {
       
     slackSend color: 'good', message: 'OpenShift Jenkins Pipeline needs you to approve promotion of build at https://ec2-34-217-23-58.us-west-2.compute.amazonaws.com:8443/console/project/labs-ci-cd/browse/pipelines/java-app-pipeline?tab=history'
   }
-
-  stage('Conduct Vulnerability Assessment of Application') {
-    slackSend color: 'warning', message: 'OpenShift Jenkins Pipeline needs you to approve VA results from NEED_LINK_INCLUDED'
-  }    
+    
+  stage('Create Vulnerability Assessment Pod') {
+    node('jenkins-slave-zap') {
+        stage('Scan Web Application') {
+            dir('/zap') {
+                def retVal = sh returnStatus: true, script: '/zap/zap-baseline.py -r baseline.html -t http://java-app-labs-dev.34.217.23.58.nip.io/'
+                publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: '/zap/wrk', reportFiles: 'baseline.html', reportName: 'ZAP Baseline Scan', reportTitles: 'ZAP Baseline Scan'])
+                echo "Return value is: ${retVal}"
+                slackSend color: 'warning', message: 'OpenShift Jenkins Pipeline needs you to approve VA results from NEED_LINK_INCLUDED'
+              }
+          }
+      }
+  }
     
   stage ('Deploy to Demo') {
 
