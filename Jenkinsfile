@@ -46,7 +46,7 @@ node (''){
 **/
 node('jenkins-slave-mvn') {
 
-  stage('Acquire Code from GitHub') {
+  stage('Checkout from GitHub') {
     checkout scm
       
   }
@@ -71,7 +71,7 @@ node('jenkins-slave-mvn') {
         } // SonarQube taskId is automatically attached to the pipeline context
     }
     
-    stage('Promotion Gate') {
+    stage('Manual Promotion Gate') {
         slackSend color: 'warning', message: 'OpenShift Jenkins Pipeline needs you to approve SAST results from http://sonarqube-labs-ci-cd.34.217.23.58.nip.io/dashboard?id=com.rhc%3Aautomation-api'
         input "Build Application?" 
     }
@@ -87,7 +87,7 @@ node('jenkins-slave-mvn') {
     } 
     **/
       
-    stage('Compile and Deploy Artifacts to Nexus') {        
+    stage('Generate Artifacts in Nexus') {        
       // TODO - introduce a variable here
       sh "mvn ${env.MVN_COMMAND} -D hsql -DaltDeploymentRepository=${MVN_SNAPSHOT_DEPLOYMENT_REPOSITORY}"
     }
@@ -98,13 +98,13 @@ node('jenkins-slave-mvn') {
     }
   }
     
-  stage('Scan Image') {
+  stage('Scan Container Image') {
     slackSend color: 'warning', message: 'OpenShift Jenkins Pipeline needs you to approve SCAN results from NEED_LINK_INCLUDED'
     input "Promote Image for Deployment to Dev?"
   }
     
   // no user changes should be needed below this point
-  stage ('Deploy Container to Dev') {
+  stage ('Deploy to Dev') {
 
     openshiftTag (apiURL: "${env.OCP_API_SERVER}", authToken: "${env.OCP_TOKEN}", destStream: "${env.APP_NAME}", destTag: 'latest', destinationAuthToken: "${env.OCP_TOKEN}", destinationNamespace: "${env.DEV_PROJECT}", namespace: "${env.CI_CD_PROJECT}", srcStream: "${env.APP_NAME}", srcTag: 'latest')
 
@@ -117,7 +117,7 @@ node('jenkins-slave-mvn') {
     slackSend color: 'warning', message: 'OpenShift Jenkins Pipeline needs you to approve VA results from NEED_LINK_INCLUDED'
   }    
     
-  stage ('Deploy Container to Demo') {
+  stage ('Deploy to Demo') {
 
 
     openshiftTag (apiURL: "${env.OCP_API_SERVER}", authToken: "${env.OCP_TOKEN}", destStream: "${env.APP_NAME}", destTag: 'latest', destinationAuthToken: "${env.OCP_TOKEN}", destinationNamespace: "${env.DEMO_PROJECT}", namespace: "${env.DEV_PROJECT}", srcStream: "${env.APP_NAME}", srcTag: 'latest')
