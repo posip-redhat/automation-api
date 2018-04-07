@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class HomeController {
 	
-    private final String indexPage = "redirect:swagger-ui.html"
+    private final String indexPage = "redirect:swagger-ui.html";
 	
 	/**
 	@RequestMapping(value = "/")
