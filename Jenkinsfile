@@ -113,7 +113,7 @@ node('jenkins-slave-mvn') {
   }
     
   stage('Create Vulnerability Assessment Pod') {
-    node('jenkins-slave-zap') {
+    node('owasp-zap-openshift') {
         stage('Scan Web Application') {
             sh 'mkdir /tmp/workdir'
             sh 'mkdir /tmp/workdir/rpts'
