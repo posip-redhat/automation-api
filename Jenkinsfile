@@ -118,8 +118,8 @@ node('jenkins-slave-mvn') {
             sh 'mkdir /tmp/workdir'
             sh 'mkdir /tmp/workdir/rpts'
             dir('/tmp/workdir') {
-                def retVal = sh returnStatus: true, script: '/zap/zap-baseline.py -r baseline.html -t http://java-app-labs-dev.34.217.23.58.nip.io/'
-                publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: '/tmp/workdir', reportFiles: 'baseline.html', reportName: 'ZAP Baseline Scan', reportTitles: 'ZAP Baseline Scan'])
+                def retVal = sh returnStatus: true, script: '/zap/zap-baseline.py -r /tmp/workdir/rpts/baseline.html -t http://java-app-labs-dev.34.217.23.58.nip.io/'
+                publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: '/tmp/workdir/rpts', reportFiles: 'baseline.html', reportName: 'ZAP Baseline Scan', reportTitles: 'ZAP Baseline Scan'])
                 echo "Return value is: ${retVal}"
                 // sh "cp -r /tmp/workdir/baseline.html $WORKSPACE"
 
