@@ -128,6 +128,7 @@ node('jenkins-slave-mvn') {
               archiveArtifacts '/tmp/workdir/*.html'
             }       
           }
+    }
   }
  
   stage('Manual Promotion Stage') {
