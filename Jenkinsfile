@@ -105,7 +105,7 @@ node('jenkins-slave-mvn') {
 
     openshiftVerifyDeployment (apiURL: "${env.OCP_API_SERVER}", authToken: "${env.OCP_TOKEN}", depCfg: "${env.APP_NAME}", namespace: "${env.DEV_PROJECT}", verifyReplicaCount: true)
       
-    slackSend color: 'good', message: 'OpenShift Jenkins Pipeline needs you to approve promotion of build'
+    slackSend color: 'good', message: 'OpenShift Jenkins Pipeline needs you to approve promotion of build at https://console.mydemos.net:8443/console/project/labs-ci-cd/browse/pipelines'
   }
 
   stage ('Deploy to Demo') {
