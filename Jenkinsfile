@@ -116,7 +116,8 @@ node('jenkins-slave-mvn') {
   stage('Create Vulnerability Assessment Pod') {
     node('jenkins-slave-zap') {
         stage('Scan Web Application') {
-            dir('/zap') {
+            sh 'mkdir /tmp/workdir'
+            dir('/tmp/workdir') {
                 def retVal = sh returnStatus: true, script: '/zap/zap-baseline.py -r baseline.html -t http://java-app-labs-dev.34.217.23.58.nip.io/'
                 publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: '/zap/wrk', reportFiles: 'baseline.html', reportName: 'ZAP Baseline Scan', reportTitles: 'ZAP Baseline Scan'])
                 echo "Return value is: ${retVal}"
