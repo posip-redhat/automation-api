@@ -9,19 +9,19 @@ import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.SpringCodegen", date = "2017-01-12T13:59:49.822-08:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.SpringCodegen", date = "2018-04-06T13:59:49.822-08:00")
 
 @Configuration
 public class SwaggerDocumentationConfig {
 
     ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-            .title("Red Hat Open Innovation Labs API")
+            .title("Red Hat Sample Web Service API")
             .description("A generic model to support automation at all levels of the application and infrastructure lifecycle.")
             .license("Apache 2.0")
             .licenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html")
             .termsOfServiceUrl("https://github.com/rht-labs/api-design")
-            .version("0.4.0-alpha")
+            .version("0.1.0")
             .contact(new Contact("","", "rhc-open-innovation-labs@redhat.com"))
             .build();
     }
