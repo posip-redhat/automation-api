@@ -117,16 +117,21 @@ node('jenkins-slave-mvn') {
         stage('Scan Web Application') {
             sh 'mkdir /tmp/workdir'
             sh 'mkdir /tmp/workdir/rpts'
+            sh 'mkdir /var/lib/jenkins/jobs'
             dir('/tmp/workdir') {
                 def retVal = sh returnStatus: true, script: '/zap/zap-baseline.py -r baseline.html -t http://java-app-labs-dev.34.217.23.58.nip.io/'
                 publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: '/tmp/workdir/rpts', reportFiles: 'baseline.html', reportName: 'ZAP Baseline Scan', reportTitles: 'ZAP Baseline Scan'])
                 echo "Return value is: ${retVal}"
-                slackSend color: 'warning', message: 'OpenShift Jenkins Pipeline needs you to approve VA results from https://jenkins-labs-ci-cd.34.217.23.58.nip.io/job/labs-ci-cd/job/labs-ci-cd-java-app-pipeline/'
-                input "Promote Image for Dev to Demo?"
+
             }
           }
       }
   }
+ 
+  stage('Manual Promotion Stage') {
+      slackSend color: 'warning', message: 'OpenShift Jenkins Pipeline needs you to approve VA results from https://jenkins-labs-ci-cd.34.217.23.58.nip.io/job/labs-ci-cd/job/labs-ci-cd-java-app-pipeline/'
+      input "Promote Image for Dev to Demo?"
+  }    
     
   stage ('Deploy to Demo') {
 
