@@ -110,19 +110,20 @@ node('jenkins-slave-mvn') {
 
     openshiftVerifyDeployment (apiURL: "${env.OCP_API_SERVER}", authToken: "${env.OCP_TOKEN}", depCfg: "${env.APP_NAME}", namespace: "${env.DEV_PROJECT}", verifyReplicaCount: true)
       
-    slackSend color: 'good', message: 'OpenShift Jenkins Pipeline needs you to approve promotion of build at https://ec2-34-217-23-58.us-west-2.compute.amazonaws.com:8443/console/project/labs-ci-cd/browse/pipelines/java-app-pipeline?tab=history'
   }
     
   stage('Create Vulnerability Assessment Pod') {
     node('jenkins-slave-zap') {
         stage('Scan Web Application') {
             sh 'mkdir /tmp/workdir'
+            sh 'mkdir /tmp/workdir/rpts'
             dir('/tmp/workdir') {
                 def retVal = sh returnStatus: true, script: '/zap/zap-baseline.py -r baseline.html -t http://java-app-labs-dev.34.217.23.58.nip.io/'
-                publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: '/zap/wrk', reportFiles: 'baseline.html', reportName: 'ZAP Baseline Scan', reportTitles: 'ZAP Baseline Scan'])
+                publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: '/tmp/workdir/rpts', reportFiles: 'baseline.html', reportName: 'ZAP Baseline Scan', reportTitles: 'ZAP Baseline Scan'])
                 echo "Return value is: ${retVal}"
-                slackSend color: 'warning', message: 'OpenShift Jenkins Pipeline needs you to approve VA results from NEED_LINK_INCLUDED'
-              }
+                slackSend color: 'warning', message: 'OpenShift Jenkins Pipeline needs you to approve VA results from https://jenkins-labs-ci-cd.34.217.23.58.nip.io/job/labs-ci-cd/job/labs-ci-cd-java-app-pipeline/'
+                input "Promote Image for Dev to Demo?"
+            }
           }
       }
   }
@@ -134,6 +135,7 @@ node('jenkins-slave-mvn') {
 
     openshiftVerifyDeployment (apiURL: "${env.OCP_API_SERVER}", authToken: "${env.OCP_TOKEN}", depCfg: "${env.APP_NAME}", namespace: "${env.DEMO_PROJECT}", verifyReplicaCount: true)
 
+    slackSend color: 'good', message: 'OpenShift Jenkins Pipeline Completed Successfully'
 
   }
 
