@@ -12,17 +12,18 @@ public class HomeController {
 	
     private final String indexPage = "redirect:swagger-ui.html";
 	
-	/**
+	
 	@RequestMapping(value = "/")
 	public String index() {
 		System.out.println("swagger-ui.html");
 		return "redirect:swagger-ui.html";
 	}
-	**/
 	
+	/**
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String readData() {
         // No state-changing operations performed within this method.
         return indexPage;
     }	
+    **/
 }
